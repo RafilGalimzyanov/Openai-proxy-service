@@ -1,11 +1,8 @@
 from pydantic import BaseSettings, Field
 from dotenv import load_dotenv
 
+
 load_dotenv()
-
-
-class Token(BaseSettings):
-    value: str = Field(..., env='TOKEN_VALUE')
 
 
 class DatabaseSettings(BaseSettings):
@@ -16,5 +13,4 @@ class DatabaseSettings(BaseSettings):
     name: str = Field(..., env='DB__NAME')
 
 
-token = Token(_env_file='../.env', _env_file_encoding='utf-8')
 db = DatabaseSettings(_env_file='../.env', _env_file_encoding='utf-8')

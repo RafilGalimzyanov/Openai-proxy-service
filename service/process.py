@@ -19,7 +19,7 @@ async def user_is_valid(login: str, password: str) -> bool:
 
 
 async def send_message(user: User, message: Message):
-    response = await send_message_gpt(message)
+    response = send_message_gpt(message)
 
     if type(response) is ErrorMessage:
         return Response(status_code=response.code, content=response.message)

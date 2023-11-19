@@ -1,4 +1,5 @@
 from pydantic import BaseModel, Field
+from typing import List
 
 
 class User(BaseModel):
@@ -7,13 +8,8 @@ class User(BaseModel):
 
 
 class Message(BaseModel):
-    prompt: str
-    temperature: float = 0.5
-    model: str = "text-davinci-003"
-    max_tokens: int = 256
-    top_p: float = 1
-    frequency_penalty: float = 0
-    presence_penalty: float = 0
+    dialog_contexts: List[dict]
+    configs: List[dict]
 
 
 class ErrorMessage(BaseModel):

@@ -12,7 +12,8 @@ docker-compose up
 
 Example of `.env`:
 ```angular2html
-TOKEN_VALUE = 'your_openai_key'
+OPENAI_API_KEY = 'your_openai_key'
+OPENAI_BASE_URL = 'https://your_proxy_bla.bla'
 
 DB__USER=postgres
 DB__PASSWORD=postgres

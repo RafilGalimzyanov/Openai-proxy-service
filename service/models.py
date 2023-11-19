@@ -12,6 +12,16 @@ class Message(BaseModel):
     configs: List[dict]
 
 
+class Document(BaseModel):
+    rows: List[dict]
+
+
+class LangChainAnswer(BaseModel):
+    prompt_template: str
+    input_variables: list
+    question: str
+
+
 class ErrorMessage(BaseModel):
     code: int = Field(..., title="Error code")
     message: str = Field(..., title="Error text")

@@ -4,7 +4,8 @@ from starlette.responses import Response
 
 from service.chatgpt import send_message_gpt
 from service.database import add_history
-from service.models import Message, User, ErrorMessage
+from service.lc import create_db, answer
+from service.models import Message, User, ErrorMessage, Document
 
 
 async def user_is_valid(login: str, password: str) -> bool:
@@ -30,3 +31,11 @@ async def send_message(user: User, message: Message):
     add_history(user.login, json.dumps(message.dict()), json.dumps(response), tokens)
 
     return response
+
+
+async def create_langchain_vb(user: User, document: Document):
+    return create_db(user, document)
+
+
+async def create_langchain_answer(user: User, prompt_template: str, input_variables: list, question: str):
+    return answer(user, prompt_template, input_variables, question)

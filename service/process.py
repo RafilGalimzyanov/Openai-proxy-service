@@ -2,9 +2,9 @@ import json
 
 from starlette.responses import Response
 
-from service.chatgpt import send_message_gpt
+from service.openai_process import send_message_gpt
 from service.database import add_history
-from service.lc import create_db, answer
+from service.langchain_process import create_db, answer
 from service.models import Message, User, ErrorMessage, Document
 
 

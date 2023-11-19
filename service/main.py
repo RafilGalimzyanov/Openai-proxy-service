@@ -43,6 +43,9 @@ async def create_answer(
         user: User,
         config: LangChainAnswer
 ):
+    if not await user_is_valid(**user.dict()):
+        return Response(status_code=status.HTTP_403_FORBIDDEN, content="User is not valid!")
+
     return await create_langchain_answer(user, config.prompt_template, config.input_variables, config.question)
 
 

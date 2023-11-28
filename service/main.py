@@ -1,11 +1,12 @@
-from fastapi import FastAPI
+from typing import Optional, Dict
+
+from fastapi import FastAPI, UploadFile, File
 from starlette import status
 from starlette.responses import Response, FileResponse
 
 from service.database import get_data
-from service.models import Message, User, Document, LangChainAnswer
-from service.process import user_is_valid, send_message, create_langchain_vb, create_langchain_answer
-
+from service.models import Message, User
+from service.process import user_is_valid, send_message, create_langchain_answer, create_langchain_vb
 
 app = FastAPI(
     title="Proxy service",
@@ -27,26 +28,28 @@ async def chat(
     return await send_message(user, message)
 
 
-@app.post("/api/langchain/vector_base", response_model=None)
+@app.post("/api/langchain/vector_base/{login}:{password}", response_model=None)
 async def create_vectore_base(
-        user: User,
-        document: Document
+        login: str,
+        password: str,
+        file_content: Optional[UploadFile] = File(...)
 ):
+    user = User(login=login, password=password)
     if not await user_is_valid(**user.dict()):
         return Response(status_code=status.HTTP_403_FORBIDDEN, content="User is not valid!")
 
-    return await create_langchain_vb(user, document)
+    return await create_langchain_vb(user, file_content)
 
 
-@app.post("/api/langchain/vector_base/query", response_model=None)
+@app.post("/api/langchain/query", response_model=None)
 async def create_answer(
         user: User,
-        config: LangChainAnswer
+        config: Dict[str, Optional[str]],
 ):
     if not await user_is_valid(**user.dict()):
         return Response(status_code=status.HTTP_403_FORBIDDEN, content="User is not valid!")
 
-    return await create_langchain_answer(user, config.prompt_template, config.input_variables, config.question)
+    return await create_langchain_answer(user, config)
 
 
 @app.get("/api/logs")

@@ -1,11 +1,11 @@
 import json
 
-from starlette.responses import Response
+from starlette.responses import Response, JSONResponse
 
 from service.openai_process import send_message_gpt
 from service.database import add_history
-from service.langchain_process import create_db, answer
-from service.models import Message, User, ErrorMessage, Document
+from service.langchain_process import retrieve
+from service.models import Message, User, ErrorMessage
 
 
 async def user_is_valid(login: str, password: str) -> bool:
@@ -33,9 +33,13 @@ async def send_message(user: User, message: Message):
     return response
 
 
-async def create_langchain_vb(user: User, document: Document):
-    return create_db(user, document)
+async def create_langchain_vb(user, file_content):
+    if file_content:
+        with open(f"db/db_{user.login}", "wb") as f:
+            f.write(file_content.file.read())
+
+        return JSONResponse(content="Vector database created!")
 
 
-async def create_langchain_answer(user: User, prompt_template: str, input_variables: list, question: str):
-    return answer(user, prompt_template, input_variables, question)
+async def create_langchain_answer(user, config):
+    return retrieve(user, config)

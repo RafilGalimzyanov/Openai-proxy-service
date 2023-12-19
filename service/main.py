@@ -3,53 +3,46 @@ from starlette import status
 from starlette.responses import Response, FileResponse
 
 from service.database import get_data
-from service.models import Message, User, Document, LangChainAnswer
-from service.process import user_is_valid, send_message, create_langchain_vb, create_langchain_answer
-
+from service.models import EmbeddingRequest, ChatCompletionRequest, User
+from service.process import user_is_valid, create_embeddings_process, chat_completions, is_admin
 
 app = FastAPI(
     title="Proxy service",
     description="Proxy service",
     version="0.3.0",
     debug=True,
-    root_path="/api"
+    root_path=""
 )
 
 
-@app.post("/api/openai/chat", response_model=None)
+@app.post("/api/{login}:{password}/embeddings", response_model=None)
+async def create_embeddings(
+        login: str,
+        password: str,
+        data: EmbeddingRequest
+):
+    if not await user_is_valid(login, password):
+        return Response(status_code=status.HTTP_403_FORBIDDEN, content="User is not valid!")
+
+    return await create_embeddings_process(data, login)
+
+
+@app.post("/api/{login}:{password}/chat/completions", response_model=None)
 async def chat(
-        user: User,
-        message: Message
+        login: str,
+        password: str,
+        data: ChatCompletionRequest
 ):
-    if not await user_is_valid(**user.dict()):
+    if not await user_is_valid(login, password):
         return Response(status_code=status.HTTP_403_FORBIDDEN, content="User is not valid!")
 
-    return await send_message(user, message)
-
-
-@app.post("/api/langchain/vector_base", response_model=None)
-async def create_vectore_base(
-        user: User,
-        document: Document
-):
-    if not await user_is_valid(**user.dict()):
-        return Response(status_code=status.HTTP_403_FORBIDDEN, content="User is not valid!")
-
-    return await create_langchain_vb(user, document)
-
-
-@app.post("/api/langchain/vector_base/query", response_model=None)
-async def create_answer(
-        user: User,
-        config: LangChainAnswer
-):
-    if not await user_is_valid(**user.dict()):
-        return Response(status_code=status.HTTP_403_FORBIDDEN, content="User is not valid!")
-
-    return await create_langchain_answer(user, config.prompt_template, config.input_variables, config.question)
+    return await chat_completions(data, login)
 
 
 @app.get("/api/logs")
-async def get_logs():
+async def get_logs(user: User):
+    if not await is_admin(user):
+        return Response(status_code=status.HTTP_403_FORBIDDEN, content="User is not admin!")
+
     filename = get_data()
     return FileResponse(path=filename, media_type="text/csv", filename=filename)

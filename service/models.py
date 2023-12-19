@@ -1,5 +1,5 @@
 from pydantic import BaseModel, Field
-from typing import List
+from typing import Optional
 
 
 class User(BaseModel):
@@ -7,21 +7,18 @@ class User(BaseModel):
     password: str
 
 
-class Message(BaseModel):
-    dialog_contexts: List[dict]
-    configs: List[dict]
+class EmbeddingRequest(BaseModel):
+    input: list
+    model: str
+    encoding_format: Optional[str] = "float"
+
+    class Config:
+        extra = 'allow'
 
 
-class Document(BaseModel):
-    rows: List[dict]
+class ChatCompletionRequest(BaseModel):
+    model: str
+    messages: list[dict]
 
-
-class LangChainAnswer(BaseModel):
-    prompt_template: str
-    input_variables: list
-    question: str
-
-
-class ErrorMessage(BaseModel):
-    code: int = Field(..., title="Error code")
-    message: str = Field(..., title="Error text")
+    class Config:
+        extra = 'allow'

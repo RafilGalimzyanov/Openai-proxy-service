@@ -47,7 +47,7 @@ async def create_embeddings_process(data: EmbeddingRequest, login: str):
                 add_history(login, data.input, result, result["usage"]["total_tokens"])
                 return result
             else:
-                raise aiohttp.ClientResponseError(status=response.status, message="Ошибка при выполнении запроса")
+                raise aiohttp.ClientResponseError(status=response.status, message="Error from OpenAI API")
 
 
 async def chat_completions(request_data: ChatCompletionRequest, login):

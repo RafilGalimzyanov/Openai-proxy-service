@@ -12,7 +12,13 @@ class EmbeddingRequest(BaseModel):
     model: str
     encoding_format: Optional[str] = "float"
 
+    class Config:
+        extra = 'allow'
+
 
 class ChatCompletionRequest(BaseModel):
     model: str
     messages: list[dict]
+
+    class Config:
+        extra = 'allow'

@@ -53,7 +53,7 @@ import os
 from openai import OpenAI
 
 
-os.environ['OPENAI_BASE_URL'] = "https://openai-proxy-bla-bla.com/LOGIN:PASSWORD"
+os.environ['OPENAI_BASE_URL'] = "https://openai-proxy-bla-bla.com/api/LOGIN:PASSWORD"
 os.environ['OPENAI_API_KEY'] = "blank-key"
 
 client = OpenAI(base_url=os.getenv("OPENAI_API_BASE"))
@@ -80,7 +80,7 @@ from langchain.chains import ConversationalRetrievalChain
 from langchain.text_splitter import CharacterTextSplitter
 
 
-os.environ['OPENAI_BASE_URL'] = "https://openai-proxy-ecn8.onrender.com/LOGIN:PASSWORD"
+os.environ['OPENAI_BASE_URL'] = "https://openai-proxy-ecn8.onrender.com/api/LOGIN:PASSWORD"
 os.environ['OPENAI_API_KEY'] = "interns"
 
 model = "gpt-3.5-turbo"
